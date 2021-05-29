@@ -22,10 +22,10 @@
 
 
 #define TAG __FUNCTION__
-#define SERVER "192.168.31.151"
+#define SERVER "dev.eldereal.me"
 #define PORT "23106"
 #define DEVICE "1000"
-#define KEY "3I4BVzh78jdo&iv%"
+#define KEY "98187015"
 
 typedef struct {
     char wifi;
@@ -282,6 +282,7 @@ static void smartconfig_example_task(void* parm)
                 esp_restart();
             }
             fclose(f);
+            ESP_LOGI(TAG, "Write info %s %s %d %d", sys_conf.ssid, sys_conf.pwd, sys_conf.wifi ? 1 : 0, sys_conf.forceInit ? 1 : 0);
             esp_restart();
         }
 
@@ -436,6 +437,16 @@ static void gpio_task_example(void *arg)
     while (1) {
         EventBits_t bits = xEventGroupWaitBits(gpio_evt_group, BIT0, true, false, portMAX_DELAY);
         if (bits == BIT0) {
+            int l = gpio_get_level(GPIO_NUM_0);
+            if (l != 0) continue;
+            EventBits_t bits = xEventGroupWaitBits(
+                gpio_evt_group, BIT0, true, false, 
+                3000 / portTICK_PERIOD_MS
+            );
+            if (bits != 0) {
+                continue;
+            }
+            ESP_LOGW(TAG, "Entering smartconfig mod");
             sys_conf.forceInit = 1;
             FILE* f = fopen("/spiffs/state", "w");
             if (f == NULL) {
@@ -447,6 +458,7 @@ static void gpio_task_example(void *arg)
                 esp_restart();
             }
             fclose(f);
+            ESP_LOGI(TAG, "Write info %s %s %d %d", sys_conf.ssid, sys_conf.pwd, sys_conf.wifi ? 1 : 0, sys_conf.forceInit ? 1 : 0);
             esp_restart();
         }
     }
@@ -455,7 +467,7 @@ static void gpio_task_example(void *arg)
 void init_reset() {
     gpio_evt_group = xEventGroupCreate();
     gpio_config_t io_conf;
-    io_conf.intr_type = GPIO_INTR_POSEDGE;
+    io_conf.intr_type = GPIO_INTR_ANYEDGE;
     io_conf.pin_bit_mask = GPIO_Pin_0;
     io_conf.mode = GPIO_MODE_INPUT;
     io_conf.pull_up_en = 1;
@@ -542,6 +554,7 @@ void app_main()
             esp_restart();
         }
         fclose(f);
+        ESP_LOGI(TAG, "Write info %s %s %d %d", sys_conf.ssid, sys_conf.pwd, sys_conf.wifi ? 1 : 0, sys_conf.forceInit ? 1 : 0);
         ESP_LOGI(TAG, "Enter Airkiss mode");
         xTaskCreate(airkiss_flash_led_task, "airkiss_flash_led_task", 4096, NULL, 5, NULL);
         airkiss_task(NULL);

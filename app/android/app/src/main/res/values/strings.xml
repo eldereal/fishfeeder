@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<resources>
+  <string name="app_name">智能喂鱼器</string>
+  <string name="esptouch_message_permission">您的系统需要定位权限才能获取WiFi信息。\n点击确定授权本应用获取您的WiFi信息。</string>
+  <string name="esptouch_message_location">请先打开系统定位开关。</string>
+  <string name="esptouch_message_wifi_connection">请先连接到WiFi网络</string>
+  <string name="esptouch_message_wifi_frequency">当前WiFi网络是5G频段，但设备仅支持2.4G频段，请切换到2.4G频段的WiFi再重试</string>
+</resources>

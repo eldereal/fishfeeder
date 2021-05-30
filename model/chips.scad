@@ -53,7 +53,7 @@ module esp8266(w=26,h=48.3){
     translate([h/2-5, -1.5-12.5/2,10]) {
         color_if("Silver")
         cube(size=[4, 3, 1.5]);
-        color_if("Grey")
+        color_if("Black")
         translate([2,1.5,0])
         cylinder(r=1, h=2.1, $fn=16);
     }
@@ -61,7 +61,7 @@ module esp8266(w=26,h=48.3){
     translate([h/2-5, -1.5+12.5/2,10]) {
         color_if("Silver")
         cube(size=[4, 3, 1.5]);
-        color_if("Grey")
+        color_if("Black")
         translate([2,1.5,0])
         cylinder(r=1, h=2.1, $fn=16);
     }

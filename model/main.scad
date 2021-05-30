@@ -9,7 +9,7 @@ use <color.scad>
 
 $fn=$preview ? 16 : 128;
 $delta = 0.1;
-$gap = 0.2;
+$gap = 0.25;
 $eps = 0.01;
 
 $dev = false;
@@ -217,22 +217,23 @@ module foundation(){
 // bottle();
 
 module rod(){
-    translate([0,0,-5])
-    auger(10, 30, 5-$gap, 2);
+    $gap=0.5;
+    translate([0,0,9])
+    auger(10, 12, 5-$gap, 1.5);
 
     translate([0,0,-15])
     difference(){
         union(){
-            cylinder(r=5-$gap, h=10+$eps);
-            cylinder(r=7-$gap, h=3-$eps);
+            cylinder(r=5-$gap, h=24+$eps);
+            cylinder(r=7-$gap, h=3);
         }
 
         translate([0,0,-$eps])
         rotate([0,0,90])
         intersection(){
-            cylinder(r=2.5, h=7);
-            translate([-2.5, -1.5, 0])
-            cube(size=[5, 3, 10]);
+            cylinder(r=2.5+$gap, h=7);
+            translate([-2.5-$gap, -1.5-$gap, 0])
+            cube(size=[5+$gap*2, 3+$gap*2, 10]);
         }
     }
 }
@@ -241,12 +242,12 @@ module m3_conn(h=3){
     scale([1, 0.75, 1]) 
     difference(){
         union(){
-            cylinder(r=1.5, h=h+$eps);
+            cylinder(r=1.5-$gap, h=h+$eps);
             
             translate([0,0,h])
-            cylinder(r1=1.5, r2=2, h=1);
+            cylinder(r1=1.5-$gap, r2=1.5+$gap, h=1);
             translate([0,0,h+1])
-            cylinder(r1=2, r2=0.5, h=2);    
+            cylinder(r1=1.5+$gap, r2=0.5, h=2);    
             
         }
 
@@ -255,18 +256,25 @@ module m3_conn(h=3){
     }
 }
 
-module main(){
+module main(showUln2003=true){
     
+    move = 12;
 
     difference(){
         union(){
             
-            translate([0,0,7])
-            cylinder(r1=7, r2=21, h=10);
+            translate([move,0,7])
+            cylinder(r1=5, r2=21, h=10);
 
-            rotate([0, 90, 0])
-            translate([0,0,-9])
-            cylinder(r=7,h=33);
+            intersection(){
+                rotate([0, 90, 0])
+                translate([0,0,-9])
+                cylinder(r=7,h=31);
+
+                translate([-21,-21,-17])
+                cube(size=[42, 42, 46]);
+                // #cylinder(r=21,h=34);
+            }
 
             intersection(){
                 union(){
@@ -274,14 +282,15 @@ module main(){
                     cube(size=[42, 14, 17]);
 
                     translate([-12,-1.5, 0])
-                    cube(size=[42, 3, 17]);
+                    cube(size=[42, 3, 29]);
                 }
-                translate([0,0,-17])
-                cylinder(r=21,h=34);
+                translate([-21,-21,-17])
+                cube(size=[42, 42, 46]);
+                // #cylinder(r=21,h=34);
             }
 
-            translate([0,0,-7])
-            cylinder(r=7,h=17+$eps);
+            translate([move,0,-7])
+            cylinder(r=5,h=17+$eps);
 
             translate([-9-3,-21,-45])
             cube(size=[3, 42, 29+45]);
@@ -292,12 +301,13 @@ module main(){
         translate([0,0,-20])
         cylinder(r=5,h=60);
         
-        cylinder(r=5,h=17+2*$eps);
+        translate([move,0,0])
+        cylinder(r=3,h=17+2*$eps);
 
-        translate([0,0,8+$eps])
-        cylinder(r1=5, r2=19, h=10);
+        translate([move,0,8+$eps])
+        cylinder(r1=3, r2=19, h=10);
 
-        translate([0,0,18])
+        translate([move,0,18])
         cylinder(r=19, h=11+$eps);
 
         translate([-9,-8, -18])
@@ -305,22 +315,23 @@ module main(){
 
         translate([-7+$eps,17,-8])
         rotate([0, -90, 0])
-        cylinder(r=1.5, h=5+2*$eps);
+        cylinder(r=1.5+$gap, h=5+2*$eps);
 
         translate([-7+$eps,-17,-8])
         rotate([0, -90, 0])
-        cylinder(r=1.5, h=5+2*$eps);
+        cylinder(r=1.5+$gap, h=5+2*$eps);
 
         translate([-7+$eps,-16,-8-17-16])
         rotate([0, -90, 0])
-        cylinder(r=1.5, h=5+2*$eps);
+        cylinder(r=1.5+$gap, h=5+2*$eps);
 
         translate([-7+$eps,16,-8-17-16])
         rotate([0, -90, 0])
-        cylinder(r=1.5, h=5+2*$eps);
+        cylinder(r=1.5+$gap, h=5+2*$eps);
         
     }
 
+    translate([move, 0, 0])
     difference(){
         translate([0,0,17-$eps])
         bottle_cap();
@@ -336,16 +347,10 @@ module main(){
     { 
         difference(){
             translate([-62, -21, 0])
-            cube([62, 42, 2]);
-            translate([0,0, -$eps])
+            cube([62+move, 42, 2]);
+            translate([move,0, -$eps])
             cylinder(r=19, h=2+2*$eps);
         }
-
-        translate([-58, 17, 2])
-        cube(size=[2, 2, 2]);
-
-        translate([-58, -19, 2])
-        cube(size=[2, 2, 2]);
 
         translate([-62, -21, 2])
         cube(size=[2, 42, 2]);
@@ -353,7 +358,7 @@ module main(){
     
         translate([-39,0,2])
         rotate([0, 0, 180]){
-            if ($preview) {
+            if ($preview && showUln2003) {
                 uln2003();
             }
             translate([0,0,-$eps]) {
@@ -471,7 +476,7 @@ difference(){
             translate([-19,0,0])
             rotate([-90, 0, -90]) {
                 stepper();
-                color_if("Grey")
+                color_if("Silver")
                 stepper_screws() {
                     cylinder(r=1.5, h=10);
                     cylinder(r=2, h=1);
@@ -501,13 +506,13 @@ rotate([180, 0, 0])
 rotate([0, 90, 0]) 
 translate([0,0,17])
 rotate([0, 180, 180]){
-esp8266();
-color_if("Grey")
-esp8266_screws() {
-    cylinder(r=1.5, h=9);
-    translate([0,0,9])
-    cylinder(r=2,h=1);
-}
+    esp8266();
+    color_if("Silver")
+    esp8266_screws() {
+        cylinder(r=1.5, h=9);
+        translate([0,0,9])
+        cylinder(r=2,h=1);
+    }
 }
 
 color_if("#e0ffffaa")
